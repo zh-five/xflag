@@ -39,7 +39,7 @@ func cmdClone(flag *xflag.XFlagSet) {
 	}
 
 	fmt.Printf("branch: %s, repo: %s, dir: %s\n", *branch, repo, dir)
-	fmt.Println("os.args", os.Args[1:])
+	fmt.Println("重新排序后的 os.args", os.Args)
 }
 
 func cmdAdd(flag *xflag.XFlagSet) {
