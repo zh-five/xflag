@@ -20,9 +20,6 @@ type cmdInfo struct {
 
 type CmdFunc func(flag *XFlagSet)
 
-//根节点
-// var root *XFlagSet = newXFlagSet(os.Args[0], 1)
-
 func Flag() *XFlagSet {
 	return newXFlagSet(os.Args[0], 1)
 }

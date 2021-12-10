@@ -1,7 +1,7 @@
 # xflag 
-一个go语言命令行参数解析库, 基于flag模块扩展了以下功能:
+一个go语言命令行参数解析库, 代码只有一百多行, 基于flag模块扩展了以下功能:
 - 支持无限级别的子命令. 如: `app run say -s hello`
-- option(`-`开头的选项和数据)其余参数无顺序要求, 如: `rm -r ./dir/ -f`
+- 非子命令参数可以随意乱序 如: `cp -r ./dir1 ./dir2`, `cp ./dir1 -r ./dir2` 和 `cp ./dir1 ./dir2 -r` 3个命令效果一样
 
 命令格式为: `app [cmd...] [option or param]`
 `cmd` 为子命令,必须逐级按顺序填写
@@ -57,7 +57,7 @@ func cmdClone(flag *xflag.XFlagSet) {
 	}
 
 	fmt.Printf("branch: %s, repo: %s, dir: %s\n", *branch, repo, dir)
-	fmt.Println("os.args", os.Args[1:])
+	fmt.Println("重新排序后的 os.args", os.Args)
 }
 
 func cmdAdd(flag *xflag.XFlagSet) {
@@ -75,7 +75,7 @@ func cmdAdd(flag *xflag.XFlagSet) {
 }
 
 ```
-
+输出类似如下:
 ```
 $ ./test -h
 用法: ./test [cmd...] [option...] [param...]
@@ -93,5 +93,14 @@ $ ./test clone -h
 Usage of ./test clone:
   -b string
         分支名称
+
+# 非子命令部分可以随意乱序
+$ ./test clone  http://xxx -b v1 dir 
+branch: v1, repo: http://xxx, dir: dir
+重新排序后的 os.args [./test clone -b v1 http://xxx dir]
+
+$ ./test clone  http://xxx dir -b v1
+branch: v1, repo: http://xxx, dir: dir
+重新排序后的 os.args [./test clone -b v1 http://xxx dir]
 
 ```

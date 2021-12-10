@@ -102,21 +102,27 @@ func TestCmd(t *testing.T) {
 }
 
 func TestCmd1(t *testing.T) {
-	os.Args = []string{"test", "cmd", "cmd", "-f", ""}
+	os.Args = []string{"test", "cmd", "cmd1", "-f", "file1"}
 	cmd_ok := false
 	fg := Flag()
 	fg.BindCmd("cmd", func(flag *XFlagSet) {
 		cmd_ok = true
 		f := flag.Bool("f", false, "ff")
 		flag.BindCmd("cmd1", func(flag *XFlagSet) {
+			f := flag.Bool("f", false, "ff")
+			flag.Parse()
+
+			if !*f {
+				t.Fail()
+			}
+			if flag.Arg(0) != "file1" {
+				t.Fail()
+			}
 
 		}, "cmd1...")
 		flag.Parse()
 
 		if *f {
-			t.Fail()
-		}
-		if flag.Arg(0) != "file2" {
 			t.Fail()
 		}
 	}, "cmd...")
