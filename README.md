@@ -1,12 +1,9 @@
 # xflag 
 一个go语言命令行参数解析库, 代码只有一百多行, 基于flag模块扩展了以下功能:
 - 支持无限级别的子命令. 如: `app run say -s hello`
-- 非子命令参数可以随意乱序 如: `cp -r ./dir1 ./dir2`, `cp ./dir1 -r ./dir2` 和 `cp ./dir1 ./dir2 -r` 3个命令效果一样
+- 支持非子命令参数乱序写 如: `cp ./dir1 -r ./dir2` 和 `cp ./dir1 ./dir2 -r` 都等同于 `cp -r ./dir1 ./dir2`
 
-命令格式为: `app [cmd...] [option or param]`
-`cmd` 为子命令,必须逐级按顺序填写
-`option` 是以`-`开头的选项和数据(如果有),如, `-f` `-o a.log`
-`param` 其余参数. 如`rm -r ./dir/ -f` 中的`./dir/`
+命令格式为: `app [cmd...] [非子命令参数...]`. 其中 `cmd` 为子命令, 必须逐级按顺序写. 非子命令参数可以乱序写
 
 
 # 安装
