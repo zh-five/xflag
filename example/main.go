@@ -39,6 +39,7 @@ func cmdClone(flag *xflag.XFlagSet) {
 	}
 
 	fmt.Printf("branch: %s, repo: %s, dir: %s\n", *branch, repo, dir)
+	fmt.Println("os.args", os.Args[1:])
 }
 
 func cmdAdd(flag *xflag.XFlagSet) {

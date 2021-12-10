@@ -21,13 +21,10 @@ type cmdInfo struct {
 type CmdFunc func(flag *XFlagSet)
 
 //根节点
-var root *XFlagSet = newXFlagSet(os.Args[0], 1)
+// var root *XFlagSet = newXFlagSet(os.Args[0], 1)
 
 func Flag() *XFlagSet {
-	if root.Parsed() {
-		return nil
-	}
-	return root
+	return newXFlagSet(os.Args[0], 1)
 }
 
 func newXFlagSet(name string, level uint) *XFlagSet {
@@ -65,10 +62,45 @@ func (x *XFlagSet) Parse() {
 				tmp := newXFlagSet(x.Name()+" "+s_cmd, x.level+1)
 				info.cb(tmp)
 			}
+			return
+		} else {
+			fmt.Fprintln(x.Output(), "Subcommand error:", s_cmd)
+			os.Exit(2)
 		}
 	}
 
-	x.FlagSet.Parse(os.Args[x.level:]) //解析参数
+	x.sortParse(os.Args[x.level:]) //解析参数
+}
+
+// 调整顺序后解析
+func (x *XFlagSet) sortParse(args []string) {
+	all_num := len(args)
+	param := make([]string, 0, all_num)
+	new_args := args[0:0]
+
+	start := 0
+	for start < all_num {
+		x.FlagSet.Parse(args[start:])
+		tmp := x.FlagSet.Args()
+		idx := len(tmp)
+		offset := len(args[start:]) - idx
+		new_args = append(new_args, args[start:start+offset]...)
+		start += offset
+
+		for i, v := range tmp {
+			if v[0] == '-' {
+				idx = i
+				break
+			}
+		}
+		//fmt.Println("arg:", args[start:], "tmp:", tmp, "idx:", idx, "new_args:", new_args, "param:", param)
+		param = append(param, tmp[0:idx]...)
+		start += idx
+		//fmt.Println("arg:", args[start:], "tmp:", tmp, "idx:", idx, "new_args:", new_args, "param:", param, "\n ")
+	}
+	new_args = append(new_args, param...)
+	//fmt.Println("end args:", new_args, args)
+	x.FlagSet.Parse(new_args)
 }
 
 func (x *XFlagSet) Desc(top, bottom string) {
